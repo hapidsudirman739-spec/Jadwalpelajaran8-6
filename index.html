@@ -1,1 +1,590 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadwal Pelajaran Kelas 8-6</title>
+    <style>
+        :root {
+            --bg-dark: #07070a;
+            --card-bg: rgba(15, 15, 23, 0.85);
+            --spidey-red: #ff003c;
+            --spidey-blue: #00d2ff;
+            --spider-web: rgba(255, 0, 60, 0.15);
+            --text-main: #f0f0f8;
+            --text-sub: #a0a0b0;
+            --break-bg: rgba(255, 0, 60, 0.12);
+            --free-bg: rgba(0, 210, 255, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px 12px;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(255, 0, 60, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(0, 210, 255, 0.2) 0%, transparent 50%),
+                repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 20px, var(--spider-web) 21px, transparent 22px),
+                linear-gradient(0deg, rgba(7,7,10,0.9), rgba(7,7,10,0.9));
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid var(--spidey-red);
+            border-radius: 20px;
+            padding: 25px 18px;
+            box-shadow: 0 0 25px rgba(255, 0, 60, 0.3), inset 0 0 15px rgba(0, 210, 255, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: "🕷️";
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 120px;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sub-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            color: var(--spidey-blue);
+            text-transform: uppercase;
+            text-shadow: 0 0 8px var(--spidey-blue);
+        }
+
+        .main-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--spidey-red), #ffffff, var(--spidey-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 2px 0 8px 0;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 60, 0.5));
+        }
+
+        .clock-box {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-shadow: 0 0 12px var(--spidey-blue), 0 0 5px var(--spidey-red);
+            margin: 8px 0 3px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .date-box {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .day-selector {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 210, 255, 0.2);
+        }
+
+        .day-btn {
+            padding: 8px 0;
+            background: transparent;
+            border: none;
+            color: var(--text-sub);
+            font-weight: 700;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, var(--spidey-red), #b3002d);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(255, 0, 60, 0.8);
+            border: 1px solid var(--spidey-red);
+        }
+
+        .status-banner {
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 4px solid var(--spidey-blue);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-banner.done {
+            border-left-color: var(--spidey-red);
+            background: rgba(255, 0, 60, 0.12);
+        }
+
+        .status-banner.off {
+            border-left-color: #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .status-title {
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .schedule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-item.now {
+            background: rgba(255, 0, 60, 0.2);
+            border-color: var(--spidey-red);
+            box-shadow: 0 0 18px rgba(255, 0, 60, 0.5), inset 0 0 10px rgba(255, 0, 60, 0.3);
+            transform: scale(1.02);
+        }
+
+        .schedule-item.break {
+            background: var(--break-bg);
+            border-color: rgba(255, 0, 60, 0.3);
+        }
+
+        .schedule-item.free {
+            background: var(--free-bg);
+            border-color: rgba(0, 210, 255, 0.3);
+        }
+
+        .time-badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--spidey-blue);
+            font-family: monospace;
+            background: rgba(0, 210, 255, 0.12);
+            padding: 5px 9px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 210, 255, 0.3);
+        }
+
+        .schedule-item.now .time-badge {
+            color: #fff;
+            background: var(--spidey-red);
+            border-color: var(--spidey-red);
+            box-shadow: 0 0 8px var(--spidey-red);
+        }
+
+        .subject-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: right;
+        }
+
+        .live-tag {
+            font-size: 0.65rem;
+            background: var(--spidey-red);
+            color: #fff;
+            padding: 3px 7px;
+            border-radius: 4px;
+            margin-left: 8px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            animation: pulse 1.2s infinite;
+            box-shadow: 0 0 8px var(--spidey-red);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 25px 15px;
+            color: var(--text-sub);
+            font-size: 0.95rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 0, 60, 0.3);
+        }
+
+        .empty-state span {
+            display: block;
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .pin-container {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--spidey-blue);
+            border-radius: 12px;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+        }
+
+        .pin-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--spidey-blue);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .pin-input-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+
+        .pin-input {
+            width: 120px;
+            padding: 8px 12px;
+            background: rgba(15, 15, 23, 0.9);
+            border: 1px solid var(--spidey-red);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            box-shadow: 0 0 5px rgba(255, 0, 60, 0.3);
+        }
+
+        .pin-btn {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, var(--spidey-red), #b3002d);
+            border: none;
+            border-radius: 6px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 8px rgba(255, 0, 60, 0.5);
+        }
+
+        .pin-btn:hover {
+            box-shadow: 0 0 12px rgba(255, 0, 60, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .pin-error {
+            color: var(--spidey-red);
+            font-size: 0.75rem;
+            margin-top: 5px;
+            display: none;
+            font-weight: 600;
+        }
+
+        .secret-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(0, 210, 255, 0.08);
+            border: 1px solid var(--spidey-blue);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            text-align: left;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="sub-title">JADWAL PELAJARAN</div>
+        <div class="main-title">KELAS 8-6</div>
+        <div class="clock-box" id="clock">00:00:00</div>
+        <div class="date-box" id="date">Hari, 00 Bulan 0000</div>
+    </div>
+
+    <div class="day-selector">
+        <button class="day-btn" onclick="selectDay(1)">SEN</button>
+        <button class="day-btn" onclick="selectDay(2)">SEL</button>
+        <button class="day-btn" onclick="selectDay(3)">RAB</button>
+        <button class="day-btn" onclick="selectDay(4)">KAM</button>
+        <button class="day-btn" onclick="selectDay(5)">JUM</button>
+        <button class="day-btn" onclick="selectDay(6)">SAB</button>
+        <button class="day-btn" onclick="selectDay(0)">MGU</button>
+    </div>
+
+    <div class="status-banner" id="statusBanner">
+        <span>Status Sekolah:</span>
+        <span class="status-title" id="statusText">Memuat...</span>
+    </div>
+
+    <div class="schedule-list" id="scheduleList">
+        <!-- Jadwal diisi via JS -->
+    </div>
+</div>
+
+<script>
+    const schedules = {
+        1: [
+            { start: "08:00", end: "08:40", name: "Bahasa Inggris" },
+            { start: "08:40", end: "09:20", name: "Bahasa Inggris" },
+            { start: "09:20", end: "10:00", name: "Bahasa Inggris" },
+            { start: "10:00", end: "10:30", name: "ISTIRAHAT", type: "break" },
+            { start: "10:30", end: "11:10", name: "IPS" },
+            { start: "11:10", end: "11:50", name: "IPS" },
+            { start: "11:50", end: "13:00", name: "ISTIRAHAT", type: "break" },
+            { start: "13:00", end: "13:40", name: "IPS" },
+            { start: "13:40", end: "14:20", name: "IPA" },
+            { start: "14:20", end: "15:00", name: "IPA" }
+        ],
+        2: [
+            { start: "08:00", end: "08:40", name: "Pendidikan Pancasila" },
+            { start: "08:40", end: "09:20", name: "Pendidikan Pancasila" },
+            { start: "09:20", end: "10:00", name: "IPA" },
+            { start: "10:00", end: "10:30", name: "ISTIRAHAT", type: "break" },
+            { start: "10:30", end: "11:10", name: "IPA" },
+            { start: "11:10", end: "11:50", name: "MTK" },
+            { start: "11:50", end: "13:00", name: "ISTIRAHAT", type: "break" },
+            { start: "13:00", end: "13:40", name: "MTK" },
+            { start: "13:40", end: "14:20", name: "Bahasa Indonesia" },
+            { start: "14:20", end: "15:00", name: "Bahasa Indonesia" }
+        ],
+        3: [
+            { start: "07:30", end: "08:10", name: "Olahraga" },
+            { start: "08:10", end: "08:50", name: "Olahraga" },
+            { start: "08:50", end: "09:30", name: "PAI" },
+            { start: "09:30", end: "10:00", name: "ISTIRAHAT", type: "break" },
+            { start: "10:00", end: "10:40", name: "PAI" },
+            { start: "10:40", end: "11:20", name: "TIK" },
+            { start: "11:20", end: "12:00", name: "TIK" },
+            { start: "12:00", end: "13:00", name: "ISTIRAHAT", type: "break" },
+            { start: "13:00", end: "13:40", name: "Seni Budaya" },
+            { start: "13:40", end: "14:20", name: "Seni Budaya" },
+            { start: "14:20", end: "15:00", name: "JAMKOS", type: "free" }
+        ],
+        4: [
+            { start: "07:30", end: "08:10", name: "BK" },
+            { start: "08:10", end: "08:50", name: "BK" },
+            { start: "08:50", end: "09:30", name: "Bahasa Indonesia" },
+            { start: "09:30", end: "10:00", name: "ISTIRAHAT", type: "break" },
+            { start: "10:00", end: "10:40", name: "Bahasa Indonesia" },
+            { start: "10:40", end: "11:20", name: "Bahasa Indonesia" },
+            { start: "11:20", end: "12:00", name: "MTK" },
+            { start: "12:00", end: "13:00", name: "ISTIRAHAT", type: "break" },
+            { start: "13:00", end: "13:40", name: "MTK" },
+            { start: "13:40", end: "14:20", name: "Bahasa Sunda" },
+            { start: "14:20", end: "15:00", name: "Bahasa Sunda" }
+        ],
+        5: [
+            { start: "07:00", end: "08:00", name: "Sholat Dhuha" },
+            { start: "08:00", end: "09:00", name: "Literasi / Talent" },
+            { start: "09:00", end: "09:30", name: "ISTIRAHAT", type: "break" },
+            { start: "09:30", end: "11:30", name: "Kokurikuler" },
+            { start: "11:30", end: "13:00", name: "ISTIRAHAT", type: "break" },
+            { start: "13:00", end: "15:00", name: "Ekskul Wajib" }
+        ]
+    };
+
+    const CORRECT_PIN = "1234";
+    const secretMessages = {
+        6: "🔒 <b>Pesan Rahasia Sabtu:</b> Selamat berlibur! Tetap semangat dan jangan lupa istirahat yang cukup.",
+        0: "🔒 <b>Pesan Rahasia Minggu:</b> Siapkan perlengkapan sekolah buat besok Senin ya!"
+    };
+
+    // Otomatis deteksi hari ini secara real-time
+    let selectedDay = new Date().getDay();
+    let isUnlocked = false;
+
+    function updateClock() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        document.getElementById('clock').innerText = `${hours}:${minutes}:${seconds}`;
+
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('date').innerText = now.toLocaleDateString('id-ID', options);
+
+        renderSchedule();
+    }
+
+    function selectDay(dayIndex) {
+        if (selectedDay !== dayIndex) {
+            isUnlocked = false;
+        }
+        selectedDay = dayIndex;
+        renderSchedule();
+    }
+
+    function checkPin() {
+        const inputPin = document.getElementById('pinInput').value;
+        const errorText = document.getElementById('pinError');
+
+        if (inputPin === CORRECT_PIN) {
+            isUnlocked = true;
+            renderSchedule();
+        } else {
+            errorText.style.display = 'block';
+            document.getElementById('pinInput').value = '';
+        }
+    }
+
+    function renderSchedule() {
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentTimeStr = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+
+        const buttons = document.querySelectorAll('.day-btn');
+        const dayOrder = [1, 2, 3, 4, 5, 6, 0];
+        
+        buttons.forEach((btn, idx) => {
+            if (dayOrder[idx] === selectedDay) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        const listContainer = document.getElementById('scheduleList');
+        const statusBanner = document.getElementById('statusBanner');
+        const statusText = document.getElementById('statusText');
+
+        listContainer.innerHTML = '';
+        statusBanner.className = 'status-banner';
+
+        const daySchedule = schedules[selectedDay];
+
+        if (!daySchedule) {
+            statusBanner.classList.add('off');
+            statusText.innerText = "Hari Libur Sekolah";
+            
+            let extraContent = '';
+            
+            if (isUnlocked) {
+                extraContent = `
+                    <div class="secret-box">
+                        ${secretMessages[selectedDay]}
+                    </div>
+                `;
+            } else {
+                extraContent = `
+                    <div class="pin-container">
+                        <div class="pin-title">🔒 PESAN RAHASIA TERKUNCI</div>
+                        <div class="pin-input-group">
+                            <input type="password" id="pinInput" class="pin-input" maxlength="4" placeholder="****" onkeypress="if(event.key==='Enter') checkPin()">
+                            <button class="pin-btn" onclick="checkPin()">Buka</button>
+                        </div>
+                        <div class="pin-error" id="pinError">PIN Salah! Coba lagi.</div>
+                    </div>
+                `;
+            }
+
+            listContainer.innerHTML = `
+                <div class="empty-state">
+                    <span>🕷️</span>
+                    <p>Selamat Berlibur! Tidak Ada Jadwal Sekolah Hari Ini.</p>
+                    ${extraContent}
+                </div>
+            `;
+            return;
+        }
+
+        const firstTime = daySchedule[0].start;
+        const lastTime = daySchedule[daySchedule.length - 1].end;
+
+        if (selectedDay === currentDay) {
+            if (currentTimeStr < firstTime) {
+                statusText.innerText = "Belum Masuk Sekolah";
+            } else if (currentTimeStr >= lastTime) {
+                statusBanner.classList.add('done');
+                statusText.innerText = "Sekolah Hari Ini Selesai";
+            } else {
+                statusText.innerText = "KBM Sedang Berlangsung";
+            }
+        } else {
+            statusText.innerText = "Menampilkan Jadwal Lain";
+        }
+
+        daySchedule.forEach(item => {
+            const div = document.createElement('div');
+            let itemClass = 'schedule-item';
+
+            if (item.type === 'break') itemClass += ' break';
+            if (item.type === 'free') itemClass += ' free';
+
+            let isNow = false;
+            if (selectedDay === currentDay && currentTimeStr >= item.start && currentTimeStr < item.end) {
+                itemClass += ' now';
+                isNow = true;
+            }
+
+            div.className = itemClass;
+            div.innerHTML = `
+                <div class="time-badge">${item.start} - ${item.end}</div>
+                <div class="subject-name">
+                    ${item.name}
+                    ${isNow ? '<span class="live-tag">SEKARANG</span>' : ''}
+                </div>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
+
+</body>
+</html>
